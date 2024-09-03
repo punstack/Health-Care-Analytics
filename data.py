@@ -3,29 +3,34 @@ from sqlalchemy import create_engine, text
 import configparser
 import os
 
-config = configparser.ConfigParser()
+def configure_db():
+    '''
+        connect to the MySQL database using the config.ini credentials
+    '''
+    config = configparser.ConfigParser()
 
-config_file = 'config.ini'
-if not os.path.isfile(config_file):
-    raise FileNotFoundError(f"The configuration file {config_file} does not exist.")
+    config_file = 'config.ini'
+    if not os.path.isfile(config_file):
+        raise FileNotFoundError(f"The configuration file {config_file} does not exist.")
 
-config.read(config_file)
+    config.read(config_file)
 
-host = config['mysql']['host']
-user = config['mysql']['user']
-password = config['mysql']['password']
-database = config['mysql']['database']
+    host = config['mysql']['host']
+    user = config['mysql']['user']
+    password = config['mysql']['password']
+    database = config['mysql']['database']
 
-connection_string = f'mysql+mysqlconnector://{user}:{password}@{host}/{database}'
-engine = create_engine(connection_string)
+    connection_string = f'mysql+mysqlconnector://{user}:{password}@{host}/{database}'
+    engine = create_engine(connection_string)
+    return engine
 
-def update_db(csv_file_names:list):
+def update_db(csv_file_names:list, engine):
     '''
         load and write data to an SQL table with the same name as the CSV file in MIMIC III
     '''
     for csv_file in csv_file_names:
         if csv_file == "CHARTEVENTS":
-            chartevents_db()
+            chartevents_db(engine)
         data = pd.read_csv(f"mimic-iii-clinical-database-demo-1.4/{csv_file}.csv")
         try:
             data.to_sql(csv_file.lower(), con=engine, if_exists='replace', index=False)
@@ -33,7 +38,10 @@ def update_db(csv_file_names:list):
         except:
             print(f"{csv_file} could not be uploaded to the database.")
 
-def chartevents_db():
+def chartevents_db(engine):
+    '''
+        writing CHARTEVENTS.csv to a SQL file of the same name; had processing errors before
+    '''    
     dtype = {
         'value': 'str',
         'valueuom': 'str',
@@ -50,12 +58,15 @@ def chartevents_db():
             print("CHARTEVENTS chunk could not be uploaded to the database.")
             engine.dispose()
 
-if __name__ == "__main__":
+def upload_db():
     '''
+        stacks previous functions for readability
+    '''
+    engine = configure_db()
     update_db(["ADMISSIONS",
                 "CALLOUT",
                 "CAREGIVERS",
-                "CHARTEVENTS", # this is giving errors :(
+                "CHARTEVENTS",
                 "CPTEVENTS",
                 "D_CPT",
                 "D_ICD_DIAGNOSES",
@@ -77,11 +88,14 @@ if __name__ == "__main__":
                 "PROCEDUREEVENTS_MV",
                 "PROCEDURES_ICD",
                 "SERVICES",
-                "TRANSFERS"])
-    chartevents_db()
-    '''     
+                "TRANSFERS"],
+                engine)
+
+if __name__ == "__main__":
+    # testing upload of all tables
+    engine = configure_db()
     with engine.connect() as connection:
-        query = text("SELECT row_id  FROM chartevents LIMIT 5")
+        query = text("SELECT row_id FROM chartevents LIMIT 5")
         result = connection.execute(query)
         for row in result:
             print(row)
