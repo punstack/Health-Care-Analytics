@@ -33,8 +33,9 @@ queries = [
             admissions AS a
             ON p.subject_id = a.subject_id
         LIMIT 2;
-        """),
+    """),
     # what are the demographics of patients admitted to the ICU? what are there diagnoses?
+    # what are the most common admission diagnoses for different age groups?
     text("""
         SELECT
             a.insurance,
@@ -54,8 +55,23 @@ queries = [
             icustays AS i
             ON a.subject_id = i.subject_id
         LIMIT 2;
-         """),
-    # 
+    """),
+    # how do patient outcomes vary by season or time of admission?
+    # can we observe any seasonal trends in specific diagnoses?
+    text("""
+        SELECT
+            a.admittime,
+            a.insurance,
+            a.religion,
+            a.marital_status,
+            a.ethnicity,
+            a.diagnosis,
+        FROM
+            admissions AS a
+        LIMIT 2;
+    """)
+    # how does the timing of antibiotic administration affect sepsis outcomes? what about the type of medication administered?
+    # can we build a predictive model that identifies patients as being high risk for readmission?
 ]
     
 
