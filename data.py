@@ -31,6 +31,8 @@ def update_db(csv_file_names:list, engine):
     for csv_file in csv_file_names:
         if csv_file == "CHARTEVENTS":
             chartevents_db(engine)
+            continue
+
         data = pd.read_csv(f"mimic-iii-clinical-database-demo-1.4/{csv_file}.csv")
         try:
             data.to_sql(csv_file.lower(), con=engine, if_exists='replace', index=False)
@@ -94,6 +96,7 @@ def upload_db():
 if __name__ == "__main__":
     # testing upload of all tables
     engine = configure_db()
+    
     with engine.connect() as connection:
         query = text("SELECT row_id FROM chartevents LIMIT 5")
         result = connection.execute(query)
