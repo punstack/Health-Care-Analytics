@@ -1,3 +1,4 @@
+import pandas as pd
 from sqlalchemy import text
 from data import configure_db
 
