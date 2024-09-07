@@ -76,45 +76,6 @@ def query_c():
     return df
 
 def query_d():
-    query = text("""
-            SELECT
-                a.admittime,
-                a.dischtime,
-                a.hospital_expire_flag,
-                c.charttime,
-                c.storetime,
-                c.value,
-                c.valuenum,
-                c.valueuom,
-                d.label,
-                d.abbreviation,
-                d.category,
-                d.unitname,
-                m.spec_itemid,
-                m.spec_type_desc,
-                m.org_itemid,
-                m.org_name,
-                m.ab_itemid,
-                m.ab_name,
-                m.interpretation
-            FROM
-                admissions AS a
-            INNER JOIN
-                chartevents AS c
-                ON a.hadm_id = c.hadm_id
-            INNER JOIN
-                microbiologyevents AS m
-                ON a.hadm_id = m.hadm_id
-            INNER JOIN
-                d_items AS d
-                ON c.itemid = d.itemid
-            WHERE
-                LOWER(a.diagnosis) LIKE '%sepsis%';
-            """)
-    df = preprocessing(query)
-    return df
-
-def query_e():
     # TODO: check if subject id, hadm id are necessary for analysis
     # TODO: change logic of this query to look for multiple "admit" transfer_type for the same subject_id
     query = text("""
