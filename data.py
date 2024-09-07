@@ -95,10 +95,13 @@ def upload_db():
 
 if __name__ == "__main__":
     # testing upload of all tables
-    engine = configure_db()
+    upload_db()
     
+    #engine = configure_db()
+    '''
     with engine.connect() as connection:
         query = text("SELECT row_id FROM chartevents LIMIT 5")
         result = connection.execute(query)
         for row in result:
             print(row)
+    '''

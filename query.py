@@ -67,7 +67,8 @@ def query_c():
                 a.religion,
                 a.marital_status,
                 a.ethnicity,
-                a.diagnosis
+                a.diagnosis,
+                a.hospital_expire_flag
             FROM
                 admissions AS a;
             """)
