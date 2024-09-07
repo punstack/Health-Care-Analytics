@@ -166,7 +166,7 @@ def mapped_diagnosis(df_column):
         'STROKE/TIA': 'Neurological Issues',
         'MITRAL REGURGITATION;CORONARY ARTERY DISEASE\\CORONARY ARTERY BYPASS GRAFT WITH MVR ? MITRAL VALVE REPLACEMENT /SDA': 'Cardiovascular Issues',
         'SYNCOPE': 'Cardiovascular Issues',
-        'TELEMETRY': 'Cardiovascular Issues',  # Added based on context
+        'TELEMETRY': 'Cardiovascular Issues',
         'RIGHT HUMEROUS FRACTURE': 'Trauma/Injury',
         'RENAL FAILIURE-SYNCOPE-HYPERKALEMIA': 'Renal Issues',
         'RECURRENT LEFT CAROTID STENOSIS,PRE HYDRATION': 'Cardiovascular Issues',
