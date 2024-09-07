@@ -76,29 +76,24 @@ def query_c():
     return df
 
 def query_d():
-    # TODO: check if subject id, hadm id are necessary for analysis
-    # TODO: change logic of this query to look for multiple "admit" transfer_type for the same subject_id
     query = text("""
             SELECT
                 p.subject_id,
                 p.gender,
                 TIMESTAMPDIFF(YEAR, p.dob, a.admittime) AS age,
-                a.hadm_id,
                 a.admission_type,
                 a.admittime,
                 a.dischtime,
-                a.hospital_expire_flag,
                 a.diagnosis,
                 i.los,
-                s.curr_service,
-                t.eventtype AS transfer_type,
-                t.intime AS transfer_intime,
-                t.outtime AS transfer_outtime,
-                (SELECT COUNT(*)
-                FROM admissions AS a2
-                WHERE a2.subject_id = p.subject_id
-                    AND a2.admittime > a.dischtime
-                    AND TIMESTAMPDIFF(DAY, a.dischtime, a2.admittime) <= 30) AS readmission_within_30_days
+                RANK() OVER (PARTITION BY i.subject_id ORDER BY i.intime) AS icustay_id_order,
+                CASE WHEN a.dischtime IS NULL THEN 0
+                    ELSE (SELECT COUNT(*)
+                        FROM admissions AS a2
+                        WHERE a2.subject_id = p.subject_id
+                            AND a2.admittime > a.dischtime
+                            AND TIMESTAMPDIFF(DAY, a.dischtime, a2.admittime) <= 30)
+                END AS readmission_within_30_days
             FROM
                 patients AS p
             INNER JOIN
@@ -107,14 +102,10 @@ def query_d():
             INNER JOIN
                 icustays AS i
                 ON a.hadm_id = i.hadm_id
-            INNER JOIN
-                services AS s
-                ON a.hadm_id = s.hadm_id
-            LEFT JOIN
-                transfers AS t
-                ON a.hadm_id = t.hadm_id
+                 
             WHERE
-                a.hospital_expire_flag = 0;
+                a.hospital_expire_flag = "0"
+            ORDER BY p.subject_id, icustay_id_order;
             """)
     df = preprocessing(query)
     return df
@@ -126,7 +117,8 @@ def mapped_diagnosis(df_column):
         'HUMERAL FRACTURE': 'Trauma/Injury',
         'ALCOHOLIC HEPATITIS': 'Infections',
         'STROKE/TIA': 'Neurological Issues',
-        'MITRAL REGURGITATION;CORONARY ARTERY DISEASE\\CORONARY ARTERY BYPASS GRAFT WITH MVR ? MITRAL VALVE REPLACEMENT /SDA': 'Cardiovascular Issues',
+        'MITRAL REGURGITATION': 'Cardiovascular Issues',
+        'CORONARY ARTERY DISEASE\\CORONARY ARTERY BYPASS GRAFT WITH MVR ? MITRAL VALVE REPLACEMENT /SDA': 'Cardiovascular Issues',
         'SYNCOPE': 'Cardiovascular Issues',
         'TELEMETRY': 'Cardiovascular Issues',
         'RIGHT HUMEROUS FRACTURE': 'Trauma/Injury',
@@ -225,3 +217,18 @@ def mapped_diagnosis(df_column):
     df_transformed = df_column.map(diagnosis_mapping).fillna('Other')
 
     return df_transformed
+    
+if __name__ == "__main__":
+    df = query_e()
+    #print(df.head(20))
+    #df.info()
+
+    #print(df['readmission_within_30_days'].unique())
+    #print(df['icustay_id_order'].unique())
+    #print(df[df['icustay_id_order'] == 56])
+    #print(df[df['subject_id'] == 41976])
+    #print(df['admittime'][df['subject_id'] == 41976])
+
+    #df_grouped = df.groupby('subject_id')
+
+    #print(df['readmission_within_30_days'].unique())
