@@ -43,7 +43,9 @@ def query_b():
                 a.diagnosis,
                 i.los,
                 ABS(TIMESTAMPDIFF(DAY, p.dod, a.dischtime)) AS death_days,
-                IF(ABS(TIMESTAMPDIFF(DAY, p.dod, a.dischtime)) > 90, "death not within 90 days of discharge", IF(TIMESTAMPDIFF(DAY, p.dod, a.dischtime) = 0, "death within hospital", "death within 90 days of discharge")) AS death_time,
+                IF(ABS(TIMESTAMPDIFF(DAY, p.dod, a.dischtime)) > 90, "death not within 90 days of discharge",
+                    IF(TIMESTAMPDIFF(DAY, p.dod, a.dischtime) = 0, "death within hospital",
+                        "death within 90 days of discharge")) AS death_time,
                 a.hospital_expire_flag
             FROM
                 admissions AS a
@@ -112,6 +114,8 @@ def query_d():
     return df
 
 def query_e():
+    # TODO: check if subject id, hadm id are necessary for analysis
+    # TODO: change logic of this query to look for multiple "admit" transfer_type for the same subject_id
     query = text("""
             SELECT
                 p.subject_id,
