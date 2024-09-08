@@ -217,18 +217,3 @@ def mapped_diagnosis(df_column):
     df_transformed = df_column.map(diagnosis_mapping).fillna('Other')
 
     return df_transformed
-    
-if __name__ == "__main__":
-    df = query_e()
-    #print(df.head(20))
-    #df.info()
-
-    #print(df['readmission_within_30_days'].unique())
-    #print(df['icustay_id_order'].unique())
-    #print(df[df['icustay_id_order'] == 56])
-    #print(df[df['subject_id'] == 41976])
-    #print(df['admittime'][df['subject_id'] == 41976])
-
-    #df_grouped = df.groupby('subject_id')
-
-    #print(df['readmission_within_30_days'].unique())
