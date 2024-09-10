@@ -78,7 +78,6 @@ def query_c():
 def query_d():
     query = text("""
             SELECT
-                p.subject_id,
                 p.gender,
                 TIMESTAMPDIFF(YEAR, p.dob, a.admittime) AS age,
                 a.admission_type,
@@ -86,14 +85,15 @@ def query_d():
                 a.dischtime,
                 a.diagnosis,
                 i.los,
-                RANK() OVER (PARTITION BY i.subject_id ORDER BY i.intime) AS icustay_id_order,
-                CASE WHEN a.dischtime IS NULL THEN 0
-                    ELSE (SELECT COUNT(*)
+                CASE WHEN a.dischtime IS NULL
+                    OR (SELECT COUNT(*)
                         FROM admissions AS a2
                         WHERE a2.subject_id = p.subject_id
                             AND a2.admittime > a.dischtime
-                            AND TIMESTAMPDIFF(DAY, a.dischtime, a2.admittime) <= 30)
-                END AS readmission_within_30_days
+                            AND TIMESTAMPDIFF(DAY, a.dischtime, a2.admittime) <= 30) > 0
+                    THEN 1
+                    ELSE 0
+                END AS readmission_flag
             FROM
                 patients AS p
             INNER JOIN
@@ -101,16 +101,30 @@ def query_d():
                 ON p.subject_id = a.subject_id
             INNER JOIN
                 icustays AS i
-                ON a.hadm_id = i.hadm_id
-                 
+                ON a.hadm_id = i.hadm_id  
             WHERE
                 a.hospital_expire_flag = "0"
-            ORDER BY p.subject_id, icustay_id_order;
             """)
     df = preprocessing(query)
     return df
 
+'''
+old code:
+
+RANK() OVER (PARTITION BY i.subject_id ORDER BY i.intime) AS icustay_id_order,
+                CASE WHEN a.dischtime IS NULL THEN 0
+                    ELSE (SELECT COUNT(*)
+                        FROM admissions AS a2
+                        WHERE a2.subject_id = p.subject_id
+                            AND a2.admittime > a.dischtime
+                            AND TIMESTAMPDIFF(DAY, a.dischtime, a2.admittime) <= 30)
+                END AS readmission_within_30_days,
+'''
+
 def mapped_diagnosis(df_column):
+    ### TODO: update diagnosis_mapping to include all unique combinations of diagnoses...
+    ### TODO: diagnoses will NOT be split by semicolon but instead judged together
+    
     diagnosis_mapping = {
         'SEPSIS': 'Infections',
         'HEPATITIS B': 'Infections',
@@ -214,6 +228,24 @@ def mapped_diagnosis(df_column):
         'BRADYCARDIA': 'Cardiovascular Issues',
         'CHOLANGITIS': 'Gastrointestinal Issues'
     }
+
     df_transformed = df_column.map(diagnosis_mapping).fillna('Other')
 
     return df_transformed
+
+
+
+'''
+# code I was hoping would work
+
+    def categorize_diagnosis(diagnosis_string):
+        categories = []
+        for diagnosis in diagnosis_string.split(';'):
+            diagnosis = diagnosis.strip()  # Remove leading/trailing whitespaces
+        if diagnosis in diagnosis_mapping:
+            categories.append(diagnosis_mapping[diagnosis])
+        if not categories:
+            categories.append('Other')
+        return categories
+
+'''
