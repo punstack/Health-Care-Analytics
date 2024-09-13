@@ -24,21 +24,15 @@ def configure_db():
     engine = create_engine(connection_string)
     return engine
 
-def update_db(csv_file_names:list, engine):
-    '''
-        load and write data to an SQL table with the same name as the CSV file in MIMIC III
-    '''
-    for csv_file in csv_file_names:
-        if csv_file == "CHARTEVENTS":
-            chartevents_db(engine)
-            continue
-
-        data = pd.read_csv(f"mimic-iii-clinical-database-demo-1.4/{csv_file}.csv")
+def chunk_processing(engine, csv_file):
+    chunksize = 5000
+    for i, chunk in enumerate(pd.read_csv(f"mimic-iii-clinical-database-1.4/{csv_file}.csv.gz", chunksize = chunksize, low_memory = False)):
         try:
-            data.to_sql(csv_file.lower(), con=engine, if_exists='replace', index=False)
-            print(f"{csv_file} was uploaded to SQL database successfully.")
-        except:
-            print(f"{csv_file} could not be uploaded to the database.")
+            chunk.to_sql(csv_file.lower(), con = engine, if_exists = 'append', index = False)
+            print(f"{csv_file} chunk {i+1} was uploaded to SQL database successfully.")
+        except Exception as e:
+            print(f"Error while uploading {csv_file} chunk {i+1}: {e}")
+            break
 
 def chartevents_db(engine):
     '''
@@ -51,14 +45,25 @@ def chartevents_db(engine):
         'stopped': 'str'
     }
 
-    chunksize = 50000
-    for chunk in pd.read_csv("mimic-iii-clinical-database-demo-1.4/CHARTEVENTS.csv", dtype = dtype, chunksize = chunksize):
+    chunksize = 5000
+    for i, chunk in enumerate(pd.read_csv("mimic-iii-clinical-database-1.4/CHARTEVENTS.csv.gz", dtype = dtype, chunksize = chunksize, low_memory = False)):
         try:
             chunk.to_sql("chartevents", con=engine, if_exists='append', index=False)
-            print("CHARTEVENTS chunk was uploaded to SQL database successfully.")
-        except:
-            print("CHARTEVENTS chunk could not be uploaded to the database.")
-            engine.dispose()
+            print(f"CHARTEVENTS chunk {i+1} was uploaded to SQL database successfully.")
+        except Exception as e:
+            print(f"Error while uploading CHARTEVENTS chunk {i+1}: {e}")
+            break
+
+def update_db(csv_file_names:list, engine):
+    '''
+        load and write data to an SQL table with the same name as the CSV file in MIMIC III
+    '''
+    for csv_file in csv_file_names:
+        if csv_file == "CHARTEVENTS":
+            chartevents_db(engine)
+            continue
+
+        chunk_processing(engine, csv_file)
 
 def upload_db():
     '''
@@ -92,16 +97,7 @@ def upload_db():
                 "SERVICES",
                 "TRANSFERS"],
                 engine)
+    engine.dispose()
 
 if __name__ == "__main__":
-    # testing upload of all tables
     upload_db()
-    
-    #engine = configure_db()
-    '''
-    with engine.connect() as connection:
-        query = text("SELECT row_id FROM chartevents LIMIT 5")
-        result = connection.execute(query)
-        for row in result:
-            print(row)
-    '''

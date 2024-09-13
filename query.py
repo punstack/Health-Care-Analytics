@@ -28,7 +28,7 @@ def query_a():
             WHERE 
                TIMESTAMPDIFF(YEAR, p.dob, p.dod) < 300;
             """)
-    df = preprocessing(query)
+    df = preprocessing(query) # do I want to include people aged >79 in this first analysis?
     return df
 
 def query_b():
@@ -233,19 +233,7 @@ def mapped_diagnosis(df_column):
 
     return df_transformed
 
-
-
-'''
-# code I was hoping would work
-
-    def categorize_diagnosis(diagnosis_string):
-        categories = []
-        for diagnosis in diagnosis_string.split(';'):
-            diagnosis = diagnosis.strip()  # Remove leading/trailing whitespaces
-        if diagnosis in diagnosis_mapping:
-            categories.append(diagnosis_mapping[diagnosis])
-        if not categories:
-            categories.append('Other')
-        return categories
-
-'''
+if __name__ == "__main__":
+    engine = configure_db
+    df_a = query_a()
+    df_a.info()
