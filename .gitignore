@@ -5,3 +5,4 @@ config.ini
 instance/
 *.pyc
 __pycache__/
+output.png
