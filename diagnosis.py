@@ -20,9 +20,9 @@ def mapped_diagnosis(df_column):
         r'\bINJURY\b|\bINJURIES\b': 'Trauma/Injury',
         r'\bBITE[S]?\b': 'Trauma/Injury',
         r'\bKICKED[ ]BY[ ]HORSE\b': 'Trauma/Injury',
-        
+
         r'\bNECROTIZING\b|\bNECROTISING\b|\bNECTROTIZING\b|\bNECROTZING\b|\bNECROSIS\b': 'Infections',
-        r'\bSEP[S]?I[S]S\b|\bSEPISI\b|\bSEPTIC\b': 'Infections',
+        r'\bSEP[S]?I[S]?S\b|\bSEPISI\b|\bSEPTIC\b': 'Infections',
         r'\bENTEROCOCCUS\b': 'Infections',
         r'\bSHINGLES\b': 'Infections',
         r'\bFASCIETIS\b|\bFASCITITIS\b|\bFASCITIS\b|\bFASCEITIS\b|\bFASCIITIS\b|\bFASCILITIS\b|\bFASCIATIS\b': 'Infections',
@@ -165,7 +165,7 @@ def mapped_diagnosis(df_column):
         r'\bLARYNGOSPASM\b': 'Respiratory Issues',
         r'\bTRACHEOMALACIA\b|\bTRACHEOSTOMY\b|\bTRACHEOBRONCHOPLASTY\b': 'Respiratory Issues',
         r'\bLOBE[ ]COLLAPSE\b': 'Respiratory Issues',
-        r'\bPULMO[M]?[NM]ARY\b|\bPE\b|': 'Respiratory Issues',
+        r'\bPULMO[M]?[NM]ARY\b|\bPE\b': 'Respiratory Issues',
         r'\bCOPD\b': 'Respiratory Issues',
         r'\bPE\b|\bPULM\b|\bPNEUMOPERTONEUM\b': 'Respiratory Issues',
         r'\bLUNG\b': 'Respiratory Issues',
@@ -293,7 +293,7 @@ def mapped_diagnosis(df_column):
         r'\bDEPRESSION\b|\bANXIETY\b': 'Neurological Issues',
         r'\bCEREBELL[AE]R\b|\bCEREBELLA\b|\bCEREBELLUM\b': 'Neurological Issues',
         r'\bMY[AE]STHENIA\b|\bMG\b': 'Neurological Issues',
-        r'\bPARAPLEGIA\b\bPARALYSIS\b|': 'Neurological Issues',
+        r'\bPARAPLEGIA\b|\bPARALYSIS\b': 'Neurological Issues',
         r'\bSDH\b': 'Neurological Issues',
         r'\bMENING[I]?OMA\b|\bMENGIOMA\b': 'Neurological Issues',
         r'\bAPHASIA\b': 'Neurological Issues',
@@ -371,7 +371,7 @@ def mapped_diagnosis(df_column):
         r'\bHYPOCAPNEA\b': 'Blood Conditions',
         r'\bKE[T]?O[A]?CIDOSIS\b': 'Blood Conditions',
         r'\bH[Y]?PER[E]?GLYCEMIA\b|\bH[Y]?POGLYCEMIA\b|\bHIGH[ ]BLOOD[ ]SUGAR\b|\bLOW[ ]BLOOD[ ]SUGAR\b': 'Blood Conditions',
-        r'\bILIAC\b|': 'Blood Conditions',
+        r'\bILIAC\b': 'Blood Conditions',
         r'\bANASARCA\b': 'Blood Conditions',
         r'\bPHLEGMASIA\b': 'Blood Conditions',
         r'\bANEMIA\b': 'Blood Conditions',
@@ -468,7 +468,7 @@ def mapped_diagnosis(df_column):
         
         for pattern, category in diagnosis_mapping.items():
             if re.search(pattern, diagnosis):
-                print(f"Matched '{diagnosis}' to category '{category}' with pattern '{pattern}'")  # Debugging print statement
+                #print(f"Matched '{diagnosis}' to category '{category}' with pattern '{pattern}'")  # Debugging print statement
                 return category
         return 'Other'
 
