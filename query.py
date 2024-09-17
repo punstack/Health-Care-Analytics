@@ -26,7 +26,7 @@ def query_a():
                 admissions AS a
                 ON p.subject_id = a.subject_id
             WHERE 
-               TIMESTAMPDIFF(YEAR, p.dob, p.dod) < 300;
+               TIMESTAMPDIFF(YEAR, p.dob, p.dob) < 300;
             """)
     df = preprocessing(query)
     return df
@@ -49,13 +49,14 @@ def query_b():
                 a.hospital_expire_flag
             FROM
                 patients AS p
-                
             INNER JOIN
                 admissions AS a
                 ON a.subject_id = p.subject_id
             INNER JOIN
                 icustays AS i
-                ON a.subject_id = i.subject_id;
+                ON a.subject_id = i.subject_id
+            WHERE 
+               TIMESTAMPDIFF(YEAR, p.dob, a.admittime) < 300;
             """)
     df = preprocessing(query)
     return df
@@ -72,6 +73,8 @@ def query_c():
                 a.hospital_expire_flag
             FROM
                 admissions AS a;
+            WHERE
+               TIMESTAMPDIFF(YEAR, p.dob, a.admittime) < 300;
             """)
     df = preprocessing(query)
     return df
