@@ -10,7 +10,7 @@ def query_a():
     query = text("""
             SELECT
                 p.gender,
-                TIMESTAMPDIFF(YEAR, p.dob, p.dod) AS age,
+                TIMESTAMPDIFF(YEAR, p.dob, a.admittime) AS age,
                 i.los,
                 ABS(TIMESTAMPDIFF(DAY, p.dod, a.dischtime)) AS death_days,
                 IF(ABS(TIMESTAMPDIFF(DAY, p.dod, a.dischtime)) > 90, "death not within 90 days of discharge",
@@ -28,14 +28,14 @@ def query_a():
             WHERE 
                TIMESTAMPDIFF(YEAR, p.dob, p.dod) < 300;
             """)
-    df = preprocessing(query) # do I want to include people aged >79 in this first analysis?
+    df = preprocessing(query)
     return df
 
 def query_b():
     query = text("""
             SELECT
                 p.gender,
-                TIMESTAMPDIFF(YEAR, p.dob, p.dod) AS age,
+                TIMESTAMPDIFF(YEAR, p.dob, a.admittime) AS age,
                 a.insurance,
                 a.religion,
                 a.marital_status,
@@ -48,9 +48,10 @@ def query_b():
                         "death within 90 days of discharge")) AS death_time,
                 a.hospital_expire_flag
             FROM
-                admissions AS a
-            INNER JOIN
                 patients AS p
+                
+            INNER JOIN
+                admissions AS a
                 ON a.subject_id = p.subject_id
             INNER JOIN
                 icustays AS i
