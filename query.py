@@ -26,7 +26,7 @@ def query_a():
                 admissions AS a
                 ON p.subject_id = a.subject_id
             WHERE 
-               TIMESTAMPDIFF(YEAR, p.dob, p.dob) < 300;
+               TIMESTAMPDIFF(YEAR, p.dob, a.admittime) < 300;
             """)
     df = preprocessing(query)
     return df
