@@ -15,7 +15,7 @@ This study utilizes MIMIC-III version 1.4, which is the most current version of 
 ## Related Figures
 ![Time to Patient Death After Hospital Admittance (death time)](https://github.com/user-attachments/assets/167dcd6c-cd41-4e83-9f5f-af330c3093aa)
 
-Patients faced one of three outcomes: "death within hospital," "death within 90 days of hospital admittance," or "death not within 90 days." This histogram displays the patient mortality rate within the hospital. It is noteworthy that the majority of patients did not die within the hospital care, despite elderly adults (>60 years of age) being the majority of patients admitted to the ICU.
+Patients faced one of three outcomes: "death within hospital," "death within 90 days of discharge," or "death not within 90 days of discharge." This histogram displays the patient mortality rate within the hospital. It is noteworthy that the majority of patients did not die within the hospital care, despite elderly adults (>60 years of age) being the majority of patients admitted to the ICU.
 
 ![Diagnosis Categories Distribution for ICU Patients](https://github.com/user-attachments/assets/44ce069f-f22f-445e-8124-6c7aa2b02dcb)
 
