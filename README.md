@@ -13,24 +13,34 @@ This relational database consists of 26 tables, encompassing a broad range of cl
 This study utilizes MIMIC-III version 1.4, which is the most current version of the database at the time of analysis ([Johnson, 2016](https://doi.org/10.13026/C2XW26)). The analysis conducted in this journal explores the distribution of patient demographics, time series analysis of ICU admission, and predicting the likelihood of patient readmission. Through the use of detailed graphics and machine learning algorithms, this study aims to provide insight into patterns in critical care admission and improve patient outcomes.
 
 ## Related Figures
-![Time to Patient Death After Hospital Admittance (death time)](https://github.com/user-attachments/assets/167dcd6c-cd41-4e83-9f5f-af330c3093aa)
+<p align="center">
+  <img src ="https://github.com/user-attachments/assets/167dcd6c-cd41-4e83-9f5f-af330c3093aa" />
+</p>
 
 Patients faced one of three outcomes: "death within hospital," "death within 90 days of discharge," or "death not within 90 days of discharge." This histogram displays the patient mortality rate within the hospital. It is noteworthy that the majority of patients did not die within the hospital care, despite elderly adults (>60 years of age) being the majority of patients admitted to the ICU.
 
-![Diagnosis Categories Distribution for ICU Patients](https://github.com/user-attachments/assets/44ce069f-f22f-445e-8124-6c7aa2b02dcb)
+<p align="center">
+  <img src = "https://github.com/user-attachments/assets/44ce069f-f22f-445e-8124-6c7aa2b02dcb"/>
+</p>
 
 This diagram depicts the most common reasons for ICU admittance. Cardiovascular, repsiratory, and gastrointestinal issues make up the three most common diagnoses for ICU patients. See `diagnosis.py` for a more detail on how diagnoses were categorized.
 
-![Stacked Bar Plot of Diagnoses by Age Group (Percentage)](https://github.com/user-attachments/assets/ffef2fcc-96ea-44bf-a480-b72ac5699a29)
+<p align="center">
+  <img src ="https://github.com/user-attachments/assets/ffef2fcc-96ea-44bf-a480-b72ac5699a29"/>
+</p>
 
 Diagnosis categories were split between age groups of ICU patients and normalized to 100% for ease of viewing. Based on the percentages, it is relatively easy to see which diagnosis categories dominate in which age group.
 
-![Hospital Expiration Rate by Season](https://github.com/user-attachments/assets/723cc9b9-22ac-4dcd-9b74-81b5d6c78de7)
+<p align="center">
+  <img src ="https://github.com/user-attachments/assets/723cc9b9-22ac-4dcd-9b74-81b5d6c78de7" />
+</p>
 
 Time of death was divided into months and then grouped into seasons. While there were no statistically significant differences by season, the lowest hospital expiry rate occured in the summer and the highest in the winter.
 
-![Hospital Expiration Rate by Time of Day](https://github.com/user-attachments/assets/2950d0b2-af5e-44ca-aa68-ee2d172de906)
-
+<p align="center">
+  <img src = "https://github.com/user-attachments/assets/2950d0b2-af5e-44ca-aa68-ee2d172de906" />
+</p>
+  
 Time of death was divded by the hour and grouped into time of day. Interestingly, mornings (6AM to 12PM) experienced the lowest hospital expiry rate at 6% compared to the other times of day.
 
 Model performance before and after oversampling/undersampling is summarized below:
